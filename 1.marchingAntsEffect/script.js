@@ -55,6 +55,9 @@ const cancelSelectBoxInteraction = () => {
 const init = () => {
     document.addEventListener('click', e=> {
         e.stopPropagation();
+        if(e.target !== selectedTarget){
+            cancelSelectBoxInteraction();
+        }
         selectBoxOnClick(e.target);
     })
 }
