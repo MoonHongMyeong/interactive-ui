@@ -3,3 +3,6 @@
 
 2. multi-ants
     - Ctrl (또는 Cmd) + 클릭으로 다중 요소를 선택할 수 있는 기능을 제공하는 순수 JavaScript 기반 UI 유틸리티, 선택된 요소에는 SVG로 구현된 'marching ants' 스타일 테두리가 그려지며 시각적으로 선택 상태를 강조
+
+3. canvas-multi-ants
+    - 2와 같은 구조 이지만 class화 해서 통합에 유리한 구조로 변경.
