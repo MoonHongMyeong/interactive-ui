@@ -6,7 +6,7 @@ function init() {
         const handler = new SelectionInteractionHandler(canvas);
 
         document.addEventListener('click', e => handler.onClick(e));
-        document.addEventListener('resize', () => handler.resize());
+        document.addEventListener('resize', () => handler.onResize());
     });
 }
 

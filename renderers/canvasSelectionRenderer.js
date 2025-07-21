@@ -1,3 +1,4 @@
+import { selectionState } from "../state/selectionState.js";
 import { setupCanvasHiDPI } from "../utils/canvas-utils.js";
 import { debounce } from '../utils/debounce.js';
 
@@ -5,7 +6,6 @@ export class SelectionRenderer {
     #canvas;
     #ctx;
     #dashOffset = 0;
-    #rects = [];
     #animationId = null;
     #handleResize;
 
@@ -22,11 +22,6 @@ export class SelectionRenderer {
         }, 300);
 
         window.addEventListener('resize', this.#handleResize);
-    }
-
-    setTargets(elements) {
-        const newRects = elements.map(element => this.#toCanvasRect(element));
-        this.#rects = newRects;
     }
 
     start() {
@@ -52,6 +47,9 @@ export class SelectionRenderer {
 
     #draw() {
         const ctx = this.#ctx;
+        const targets = selectionState.get();
+        const canvasRect = this.#canvas.getBoundingClientRect();
+
         // 이전 프레임 초기화
         ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
 
@@ -61,26 +59,20 @@ export class SelectionRenderer {
         ctx.lineDashOffset = -this.#dashOffset;
         ctx.lineWidth = 2;
 
-        // 모든 선택된 사각형 그리기
-        this.#rects.forEach(({ x, y, width, height }) => {
+        for (const target of targets){
+            const elRect = target.getBoundingClientRect();
+            const x = elRect.x - canvasRect.x;
+            const y =  elRect.y - canvasRect.y;
+            const width = elRect.width;
+            const height = elRect.height;
+
             // 약간의 외곽선 여유 공각 확보
             ctx.strokeRect(x - 1, y - 1, width + 2, height + 2);
-        });
+        }
 
         // offset 증가 (다음 프레임)
         this.#dashOffset += 1;
         // 다음 프레임 예약
         this.#animationId = requestAnimationFrame(() => this.#draw());
-    }
-
-    #toCanvasRect(element) {
-        const elRect = element.getBoundingClientRect();
-        const canvasRect = this.#canvas.getBoundingClientRect();
-        return {
-            x: elRect.x - canvasRect.x,
-            y: elRect.y - canvasRect.y,
-            width: elRect.width,
-            height: elRect.height
-        };
     }
 }

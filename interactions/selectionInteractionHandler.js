@@ -1,8 +1,8 @@
 import { SelectionRenderer } from '../renderers/canvasSelectionRenderer.js'
+import { selectionState } from '../state/selectionState.js';
 
 export class SelectionInteractionHandler {
     #renderer;
-    #selectedTargets = new Set();
 
     constructor(canvasElement){
         this.#renderer = new SelectionRenderer(canvasElement);
@@ -13,28 +13,20 @@ export class SelectionInteractionHandler {
         const isCtrlKey = event.ctrlKey || event.metaKey;
         const target = event.target.closest('.box');
 
-        if (!isCtrlKey) this.#selectedTargets.clear();
+        if (!isCtrlKey) selectionState.clear();
 
         if (target) {
-        this.#selectedTargets.has(target)
-            ? this.#selectedTargets.delete(target)
-            : this.#selectedTargets.add(target);
+            selectionState.toggle(target);
         } else {
-        this.#selectedTargets.clear();
+            selectionState.clear();
         }
-
-        this.#updateRenderer();
     }
 
     onResize(){
         this.#renderer.start();
     }
 
-    #updateRenderer() {
-        this.#renderer.setTargets([...this.#selectedTargets]);
-    }
-
-    #destory() {
+    destory() {
         this.#renderer.destroy();
     }
  
