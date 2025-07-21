@@ -1,7 +1,7 @@
-import { setupCanvasHiDPI } from "./utils/canvas-utils.js";
-import { debounce } from './utils/debounce.js';
+import { setupCanvasHiDPI } from "../utils/canvas-utils.js";
+import { debounce } from '../utils/debounce.js';
 
-export class AntsRenderer {
+export class SelectionRenderer {
     #canvas;
     #ctx;
     #dashOffset = 0;
@@ -24,19 +24,8 @@ export class AntsRenderer {
         window.addEventListener('resize', this.#handleResize);
     }
 
-    toCanvasRect(element) {
-        const elRect = element.getBoundingClientRect();
-        const canvasRect = this.#canvas.getBoundingClientRect();
-        return {
-            x: elRect.x - canvasRect.x,
-            y: elRect.y - canvasRect.y,
-            width: elRect.width,
-            height: elRect.height
-        };
-    }
-
     setTargets(elements) {
-        const newRects = elements.map(element => this.toCanvasRect(element));
+        const newRects = elements.map(element => this.#toCanvasRect(element));
         this.#rects = newRects;
     }
 
@@ -82,5 +71,16 @@ export class AntsRenderer {
         this.#dashOffset += 1;
         // 다음 프레임 예약
         this.#animationId = requestAnimationFrame(() => this.#draw());
+    }
+
+    #toCanvasRect(element) {
+        const elRect = element.getBoundingClientRect();
+        const canvasRect = this.#canvas.getBoundingClientRect();
+        return {
+            x: elRect.x - canvasRect.x,
+            y: elRect.y - canvasRect.y,
+            width: elRect.width,
+            height: elRect.height
+        };
     }
 }

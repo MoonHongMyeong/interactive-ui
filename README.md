@@ -6,3 +6,6 @@
 
 3. canvas-multi-ants
     - 2와 같은 구조 이지만 class화 해서 통합에 유리한 구조로 변경.
+
+4. selectionBox
+    - drag&drop 형식으로 사각형 boxSelection을 생성해 객체를 선택하는 이벤트
