@@ -9,7 +9,16 @@ export class SelectionInteractionHandler {
         this.#renderer.start();
     }
 
-    onClick(event) {
+    on(){
+        document.addEventListener('click', this.#onClick);
+    }
+
+    off() {
+        this.#renderer.destroy();
+        document.removeEventListener('click', this.#onClick);
+    }
+
+    #onClick(event) {
         const isCtrlKey = event.ctrlKey || event.metaKey;
         const target = event.target.closest('.box');
 
@@ -21,13 +30,4 @@ export class SelectionInteractionHandler {
             selectionState.clear();
         }
     }
-
-    onResize(){
-        this.#renderer.start();
-    }
-
-    destory() {
-        this.#renderer.destroy();
-    }
- 
 }
