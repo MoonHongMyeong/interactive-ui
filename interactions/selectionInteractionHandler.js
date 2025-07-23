@@ -1,38 +1,39 @@
-import { SelectionRenderer } from '../renderers/canvasSelectionRenderer.js';
+import { mouseDragState } from '../state/mouseDragState.js';
 import { selectionState } from '../state/selectionState.js';
 
 export class SelectionInteractionHandler {
+    #container;
     #renderer;
 
-    constructor(canvasElement){
-        this.#renderer = new SelectionRenderer(canvasElement);
+    constructor(container, renderer){
+        this.#container = container;
+        this.#renderer = renderer;
         this.#renderer.start();
     }
 
     on(){
-        document.querySelectorAll('.box').forEach(el => {
-            el.addEventListener('click', this.#onClick);
-        });
+        this.#container.addEventListener('click', this.#onClick);
     }
 
     off() {
+        this.#container.removeEventListener('click', this.#onClick);
         this.#renderer.destroy();
-        document.querySelectorAll('.box').forEach(el => {
-            el.removeEventListener('click', this.#onClick);
-        });
     }
 
-    #onClick(event) {
+    #onClick = (event) => {
         event.preventDefault();
         event.stopPropagation();
+        
+        if ( mouseDragState.isActive() ) {
+            mouseDragState.stop();
+            return;
+        }
 
         const isCtrlKey = event.ctrlKey || event.metaKey;
         const target = event.target.closest('.box');
 
         if (!isCtrlKey) selectionState.clear();
 
-        if (target) {
-            selectionState.toggle(target);
-        }
+        if (target) selectionState.toggle(target);
     }
 }

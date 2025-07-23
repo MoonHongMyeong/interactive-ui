@@ -1,3 +1,4 @@
+import { mouseDragState } from "../state/mouseDragState.js";
 import { selectionState } from "../state/selectionState.js";
 import { updateSelectionFromBox } from "../utils/selectionHitTest.js";
 
@@ -42,6 +43,7 @@ export class DragSelectHandler {
         // 오직 배경 클릭일 때만 드래그 시작
         if (isClickOnContainer) {
             this.#startPoint = { x: event.clientX, y: event.clientY };
+            mouseDragState.start();
 
             this.#container.addEventListener('mousemove', this.#onMouseMove);
             document.addEventListener('mouseup', this.#onMouseUp);
@@ -49,6 +51,7 @@ export class DragSelectHandler {
     }
 
     #onMouseMove = (event) => {
+        if ( !mouseDragState.isActive() ) return;
         event.preventDefault();
 
         const x1 = this.#startPoint.x;
@@ -66,6 +69,7 @@ export class DragSelectHandler {
     }
 
     #onMouseUp = (event) => {
+        if ( !mouseDragState.isActive() ) return;
         event.preventDefault();
         
         this.#overlay?.clear();
