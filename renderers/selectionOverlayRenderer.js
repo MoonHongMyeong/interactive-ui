@@ -8,6 +8,10 @@ export class SelectionOverlayRenderer {
         this.#createSvg();
     }
 
+    getContainer() {
+        return this.#container;
+    }
+
     #createSvg() {
         this.#svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         this.#svg.style.position = "absolute";

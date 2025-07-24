@@ -16,7 +16,7 @@ function init() {
         selectionHandler.on();
 
         const selectionOverlayRenderer = new SelectionOverlayRenderer(container);
-        const dragSelectHandler = new DragSelectHandler(container, selectionOverlayRenderer);
+        const dragSelectHandler = new DragSelectHandler(selectionOverlayRenderer);
         dragSelectHandler.on();
 
         const testHtmlProvider = (target) => {

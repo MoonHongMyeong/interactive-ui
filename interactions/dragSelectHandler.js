@@ -7,8 +7,8 @@ export class DragSelectHandler {
     #overlay
     #startPoint;
 
-    constructor(containerElement, renderer){
-        this.#container = containerElement;
+    constructor(renderer){
+        this.#container = renderer.getContainer();
         this.#overlay = renderer;
     }
 
