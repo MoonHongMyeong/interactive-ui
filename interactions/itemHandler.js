@@ -14,7 +14,6 @@ export class ItemHandler {
   }
 
   #onMouseDown = (e) => {
-    e.stopPropagation();
     e.preventDefault();
     const target = e.target.closest('.box');
     if (!target || !selectionState.get().has(target)) return;

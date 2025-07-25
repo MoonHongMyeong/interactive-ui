@@ -9,6 +9,8 @@ import { ViewportSyncHandler } from './interactions/viewportSyncHandler.js';
 
 function init() {
     document.addEventListener('DOMContentLoaded', () => {
+        const container = document.querySelector('.box-container');
+        const viewport = container.querySelector('#viewport');
         const canvas = document.querySelector('#box-canvas');
         const layer = document.querySelector('#box-layer');
 
@@ -47,9 +49,6 @@ function init() {
         const itemRenderer = new ItemRenderer(layer);
         const itemHandler = new ItemHandler(itemRenderer);
         itemHandler.init(items);
-
-        const container = document.querySelector('.box-container');
-        const viewport = container.querySelector('#viewport');
 
         const viewportSyncHandler = new ViewportSyncHandler(container, viewport);
         viewportSyncHandler.on();
