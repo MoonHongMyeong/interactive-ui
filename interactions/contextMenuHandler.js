@@ -38,7 +38,7 @@ export class ContextMenuHandler {
         menu.style.top = `${y}px`;
         menu.innerHTML = html;
 
-        document.body.appendChild(menu);
+        this.#container.appendChild(menu);
 
         const onClickOutside = (e) => {
         if (!menu.contains(e.target)) {
