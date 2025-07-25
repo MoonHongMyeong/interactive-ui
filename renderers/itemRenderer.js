@@ -2,7 +2,7 @@ export class ItemRenderer {
     #container;
 
     constructor(container){
-        this.#container = container.querySelector('#box-layer');
+        this.#container = container;
     }
     
     getContainer() {
@@ -24,9 +24,26 @@ export class ItemRenderer {
 
             this.#container.appendChild(div);
         }
+
+        this.#setContainerSize(items);
     }
 
     #clear(){
-        this.#container.innerHTML = '';
+        const boxes = this.#container.querySelectorAll('.box');
+        boxes.forEach(box => box.remove());
+    }
+
+    #setContainerSize(items) {
+        let maxX = 0;
+        let maxY = 0;
+        const offset = 50;
+
+        for ( const item of items ) {
+            maxX = Math.max(maxX, item.x + item.width);
+            maxY = Math.max(maxY, item.y + item.height);
+        }
+
+        this.#container.style.width = `${maxX + offset}px`;
+        this.#container.style.height = `${maxY + offset}px`;
     }
 }
