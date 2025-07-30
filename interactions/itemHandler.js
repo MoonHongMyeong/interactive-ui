@@ -15,20 +15,30 @@ export class ItemHandler {
 
   #onMouseDown = (e) => {
     e.preventDefault();
+
     const target = e.target.closest('.box');
     if (!target || !selectionState.get().has(target)) return;
 
-    const id = target.dataset.id;
+    const selectedElements = [...selectionState.get()];
     const startX = e.clientX;
     const startY = e.clientY;
-    const initialLeft = parseInt(target.style.left);
-    const initialTop = parseInt(target.style.top);
+
+    const initialPostitions = selectedElements.map(el => {
+      return {
+        element: el,
+        initialLeft: el.offsetLeft,
+        initialTop: el.offsetTop
+      }
+    })
 
     const onMouseMove = (e) => {
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
-      target.style.left = `${initialLeft + dx}px`;
-      target.style.top = `${initialTop + dy}px`;
+
+      for ( const { element, initialLeft, initialTop } of initialPostitions ) {
+        element.style.left = `${initialLeft + dx}px`;
+        element.style.top = `${initialTop + dy}px`;
+      }
     };
 
     const onMouseUp = () => {
