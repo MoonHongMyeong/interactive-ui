@@ -7,44 +7,41 @@ export class CoordinateTransformer {
         this.#layerElement = layerElement;
     }
 
-    #getRects = () => {
+    // style 기반으로 위치를 읽는다
+    #getViewportOffset() {
         return {
-            viewport: this.#viewportElement.getBoundingClientRect(),
-            layer: this.#layerElement.getBoundingClientRect()
-        }
-    }
-
-    /**
-     * @param {{ x: number, y: number }} point - clientX/Y 기반 좌표
-     */
-    viewportToLayerCoords(point) {
-        const { viewport, layer } = this.#getRects();
-        return {
-            x: point.x + ( layer.left - viewport.left ),
-            y: point.y + ( layer.top - viewport.top )
+            left: parseFloat(this.#viewportElement.style.left || '0'),
+            top: parseFloat(this.#viewportElement.style.top || '0')
         };
     }
 
     /**
-     * @param {{ x: number, y: number }} point - clientX/Y 기반 좌표
-     */  
-    layerToViewportCoords(point){
-        const { layer, viewport } = this.#getRects();
+     * clientX/Y 기준 좌표를 layer 기준 상대 좌표로 변환
+     */
+    viewportToLayerCoords(point) {
+        const offset = this.#getViewportOffset();
         return {
-            x: point.x + ( viewport.left - layer.left),
-            y: point.y + ( viewport.top - layer.top)
-        }
+            x: point.x + offset.left,
+            y: point.y + offset.top
+        };
     }
 
-    getViewportRect() {
-        return this.#viewportElement.getBoundingClientRect();
-    }
-    
-    getViewportOffsetStyle() {
-        const style = getComputedStyle(this.#viewportElement);
+    /**
+     * layer 좌표를 viewport 좌표계로 변환 (예: contextMenu 위치 등)
+     */
+    layerToViewportCoords(point) {
+        const offset = this.#getViewportOffset();
         return {
-            top: parseFloat(style.top) || 0,
-            left: parseFloat(style.left) || 0
-        }
+            x: point.x - offset.left,
+            y: point.y - offset.top
+        };
+    }
+
+    getViewportOffset() {
+        return this.#getViewportOffset(); // 외부에서도 접근 가능하게
+    }
+
+    getViewport() {
+        return this.#viewportElement.getBoundingClientRect();
     }
 }
