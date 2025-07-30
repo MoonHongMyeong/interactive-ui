@@ -1,11 +1,12 @@
-import { DragSelectHandler } from './interactions/dragSelectHandler.js';
-import { SelectionInteractionHandler } from './interactions/selectionInteractionHandler.js'
-import { SelectionOverlayRenderer } from './renderers/selectionOverlayRenderer.js';
-import { SelectionRenderer } from './renderers/canvasSelectionRenderer.js';
 import { ContextMenuHandler } from './interactions/contextMenuHandler.js';
-import { ItemRenderer } from './renderers/itemRenderer.js';
+import { DragSelectHandler } from './interactions/dragSelectHandler.js';
 import { ItemHandler } from './interactions/itemHandler.js';
+import { ScrollResizeHandler } from './interactions/scrollResizeHandler.js';
+import { SelectionInteractionHandler } from './interactions/selectionInteractionHandler.js';
 import { ViewportSyncHandler } from './interactions/viewportSyncHandler.js';
+import { SelectionRenderer } from './renderers/canvasSelectionRenderer.js';
+import { ItemRenderer } from './renderers/itemRenderer.js';
+import { SelectionOverlayRenderer } from './renderers/selectionOverlayRenderer.js';
 import { CoordinateTransformer } from './utils/coordinate/coordnateTransformer.js';
 
 function init() {
@@ -52,6 +53,9 @@ function init() {
         const itemRenderer = new ItemRenderer(layer);
         const itemHandler = new ItemHandler(itemRenderer);
         itemHandler.init(items);
+
+        const scrollResizeHandler = new ScrollResizeHandler(container, layer);
+        scrollResizeHandler.on();
 
         const viewportSyncHandler = new ViewportSyncHandler(container, viewport);
         viewportSyncHandler.on();
