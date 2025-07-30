@@ -6,13 +6,16 @@ import { ContextMenuHandler } from './interactions/contextMenuHandler.js';
 import { ItemRenderer } from './renderers/itemRenderer.js';
 import { ItemHandler } from './interactions/itemHandler.js';
 import { ViewportSyncHandler } from './interactions/viewportSyncHandler.js';
+import { CoordinateTransformer } from './utils/coordinate/coordnateTransformer.js';
 
 function init() {
     document.addEventListener('DOMContentLoaded', () => {
         const container = document.querySelector('.box-container');
         const viewport = container.querySelector('#viewport');
-        const canvas = document.querySelector('#box-canvas');
-        const layer = document.querySelector('#box-layer');
+        const canvas = viewport.querySelector('#box-canvas');
+        const layer = container.querySelector('#box-layer');
+
+        const transformer = new CoordinateTransformer(viewport, layer);
 
         const canvasSelectionRenderer = new SelectionRenderer(canvas);
         const selectionHandler = new SelectionInteractionHandler(layer, canvasSelectionRenderer);
@@ -36,7 +39,7 @@ function init() {
             );
         }
 
-        const contextMenuHandler = new ContextMenuHandler(layer, testHtmlProvider);
+        const contextMenuHandler = new ContextMenuHandler(layer, transformer, testHtmlProvider);
         contextMenuHandler.on();
 
         const items = [
