@@ -35,9 +35,15 @@ export class ItemHandler {
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
+      const minInitialLeft = Math.min(...initialPostitions.map(p => p.initialLeft));
+      const minInitialTop = Math.min(...initialPostitions.map(p => p.initialTop));
+
+      const clampedDx = Math.max(dx, -minInitialLeft);
+      const clampedDy = Math.max(dy, -minInitialTop);
+
       for ( const { element, initialLeft, initialTop } of initialPostitions ) {
-        element.style.left = `${initialLeft + dx}px`;
-        element.style.top = `${initialTop + dy}px`;
+        element.style.left = `${initialLeft + clampedDx}px`;
+        element.style.top = `${initialTop + clampedDy}px`;
       }
     };
 
