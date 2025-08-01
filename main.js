@@ -51,7 +51,7 @@ function init() {
         ];
 
         const itemRenderer = new ItemRenderer(layer);
-        const itemHandler = new ItemHandler(itemRenderer);
+        const itemHandler = new ItemHandler(itemRenderer, container);
         itemHandler.init(items);
 
         const scrollResizeHandler = new ScrollResizeHandler(container, layer);

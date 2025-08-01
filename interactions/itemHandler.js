@@ -2,9 +2,11 @@ import { selectionState } from "../state/selectionState.js";
 
 export class ItemHandler {
   #renderer;
+  #scrollContainer;
 
-  constructor(renderer) {
+  constructor(renderer, scrollContainer) {
     this.#renderer = renderer;
+    this.#scrollContainer = scrollContainer;
   }
 
   init(items) {
@@ -23,6 +25,9 @@ export class ItemHandler {
     const startX = e.clientX;
     const startY = e.clientY;
 
+    const startScrollleft = this.#scrollContainer.scrollLeft;
+    const startScrollTop = this.#scrollContainer.scrollTop;
+
     const initialPostitions = selectedElements.map(el => {
       return {
         element: el,
@@ -32,8 +37,8 @@ export class ItemHandler {
     })
 
     const onMouseMove = (e) => {
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      const dx = (e.clientX - startX) + (this.#scrollContainer.scrollLeft - startScrollleft);
+      const dy = (e.clientY - startY) + (this.#scrollContainer.scrollTop - startScrollTop);
 
       const minInitialLeft = Math.min(...initialPostitions.map(p => p.initialLeft));
       const minInitialTop = Math.min(...initialPostitions.map(p => p.initialTop));
