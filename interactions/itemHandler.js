@@ -1,19 +1,18 @@
 import { selectionState } from "../state/selectedItemsState.js";
 import { guideLineState } from '../state/snapGuideState.js'
 import { mouseDragState } from '../state/dragState.js';
-import { SnapManager } from "../utils/snapManager.js";
+import { applySnap } from "../utils/snap.js";
+import { computeGuideLines } from "../utils/guideLine.js";
 
 export class ItemHandler {
   #renderer;
   #scrollContainer;
   #selectionRenderer;
-  #snapManager;
 
   constructor(renderer, scrollContainer, selectionRenderer) {
     this.#renderer = renderer;
     this.#scrollContainer = scrollContainer;
     this.#selectionRenderer = selectionRenderer;
-    this.#snapManager = new SnapManager();
   }
 
   init(items) {
@@ -77,12 +76,19 @@ export class ItemHandler {
       const clampedDy = Math.max(dy, -minInitialTop);
 
       // 이동 전 좌표
+      // Compute group bounds (min left/top and max right/bottom)
+      const maxInitialRight = Math.max(...initialPositions.map(p => p.initialLeft + p.element.offsetWidth));
+      const maxInitialBottom = Math.max(...initialPositions.map(p => p.initialTop + p.element.offsetHeight));
+
+      const groupWidth = maxInitialRight - minInitialLeft;
+      const groupHeight = maxInitialBottom - minInitialTop;
+
       const draggingGroupBounds = {
         id: 'dragging-group',
         x: minInitialLeft + clampedDx,
         y: minInitialTop + clampedDy,
-        width: 0,
-        height: 0,
+        width: groupWidth,
+        height: groupHeight,
       };
 
       const allBoxes = Array.from(this.#renderer.getContainer().querySelectorAll('.box'))
@@ -95,12 +101,21 @@ export class ItemHandler {
           height: el.offsetHeight
         }));
 
-      // snap 후보 계산 및 상태 업데이트
-      const snapLines = this.#snapManager.computeSnapLines(draggingGroupBounds, allBoxes);
-      guideLineState.set(snapLines);
+      // 보조선 후보 계산 (표시 전용)
+      const guideThreshold = 50; // 넓게: 시각적 안내용
+      const guideLines = computeGuideLines(draggingGroupBounds, allBoxes, guideThreshold);
+      guideLineState.set(guideLines);
 
       // snap 보정 좌표 계산
-      const snapped = this.#snapManager.applySnap({ x: draggingGroupBounds.x, y: draggingGroupBounds.y }, snapLines);
+      // 스냅 후보 계산 (스냅 전용): 더 타이트하게
+      const snapThreshold = 10; // 붙이기 기준은 더 좁게
+      const snapLines = computeGuideLines(draggingGroupBounds, allBoxes, snapThreshold);
+      const snapped = applySnap(
+        { x: draggingGroupBounds.x, y: draggingGroupBounds.y },
+        snapLines,
+        { width: draggingGroupBounds.width, height: draggingGroupBounds.height },
+        snapThreshold
+      );
 
       const snapDx = snapped.x - minInitialLeft;
       const snapDy = snapped.y - minInitialTop;
