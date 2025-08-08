@@ -1,5 +1,5 @@
 import { selectionState } from '../state/selectedItemsState.js';
-import { getBoxLayerRelativeRect } from './coordinateUtils.js'
+import { getElementRelativeRect } from './coordinateTransform.js'
 
 /**
  * 대상 rect가 박스 안에 완전히 포함되어 있는지 판단
@@ -25,7 +25,7 @@ export function isContainedInBox(box, target) {
  */
 function getElementsInBox(boxRect, elements, layerEl) {
     return elements.filter((el) => {
-        const rect = getBoxLayerRelativeRect(el, layerEl);
+        const rect = getElementRelativeRect(el, layerEl);
         return isContainedInBox(boxRect, rect);
     });
 }

@@ -1,7 +1,7 @@
-import { mouseDragState } from "../state/mouseDragState.js";
-import { selectionState } from "../state/selectionState.js";
-import { updateSelectionFromBox } from "../utils/selectionHitTest.js";
-import { getLayerRelativePosition } from "../utils/coordinate-util.js";
+import { mouseDragState } from "../state/dragState.js";
+import { selectionState } from "../state/selectedItemsState.js";
+import { updateSelectionFromBox } from "../utils/hitTest.js";
+import { getElementRelativePosition } from "../utils/coordinateTransform.js";
 
 export class DragSelectHandler {
     #container
@@ -43,7 +43,7 @@ export class DragSelectHandler {
 
         // 오직 배경 클릭일 때만 드래그 시작
         if (isClickOnContainer) {
-            const { x, y } = getLayerRelativePosition(event, this.#container);
+            const { x, y } = getElementRelativePosition(event, this.#container);
             this.#startPoint = { x, y };
             mouseDragState.start();
 
@@ -58,7 +58,7 @@ export class DragSelectHandler {
 
         const x1 = this.#startPoint.x;
         const y1 = this.#startPoint.y;
-        const { x: x2, y: y2 } = getLayerRelativePosition(event, this.#container);
+        const { x: x2, y: y2 } = getElementRelativePosition(event, this.#container);
 
         const x = Math.min(x1, x2);
         const y = Math.min(y1, y2);

@@ -1,11 +1,11 @@
+import { getContainerRect } from '../utils/coordinateTransform.js';
+
 export class ContextMenuHandler {
     #container;
-    #transformer;
     #provider;
 
-    constructor(container, transformer, provider){
+    constructor(container, provider){
         this.#container = container;
-        this.#transformer = transformer;
         this.#provider = provider;
     }
 
@@ -21,7 +21,7 @@ export class ContextMenuHandler {
         event.preventDefault();
         event.stopPropagation();
 
-        const { x, y } = this.#transformer.viewportToLayerCoords( { x: event.clientX, y: event.clientY} );
+        const { x, y } = { x: event.clientX, y: event.clientY };
 
         const html = this.#provider(event.target);
         this.#renderContextMenu(html, x, y)
@@ -44,7 +44,7 @@ export class ContextMenuHandler {
         const menuWidth = menu.offsetWidth;
         const menuHeight = menu.offsetHeight;
 
-        const viewport = this.#transformer.getViewport();
+        const viewport = getContainerRect(this.#container.querySelector('#viewport'));
         let adjustX = x;
         let adjustY = y;
 

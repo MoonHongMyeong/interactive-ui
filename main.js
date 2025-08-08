@@ -1,26 +1,22 @@
 import { ContextMenuHandler } from './interactions/contextMenuHandler.js';
-import { DragSelectHandler } from './interactions/dragSelectHandler.js';
+import { DragSelectHandler } from './interactions/selectionBoxHandler.js';
 import { ItemHandler } from './interactions/itemHandler.js';
 import { ScrollResizeHandler } from './interactions/scrollResizeHandler.js';
-import { SelectionInteractionHandler } from './interactions/selectionInteractionHandler.js';
 import { ViewportSyncHandler } from './interactions/viewportSyncHandler.js';
-import { SelectionRenderer } from './renderers/canvasSelectionRenderer.js';
-import { ItemRenderer } from './renderers/itemRenderer.js';
-import { SelectionOverlayRenderer } from './renderers/selectionOverlayRenderer.js';
-import { CoordinateTransformer } from './utils/coordinate/coordnateTransformer.js';
+import { CanvasSelectionRenderer } from './renderers/marchingAntsRenderer.js';
+import { GuideRenderer } from './renderers/snapGuideRenderer.js';
+import { ItemRenderer } from './renderers/boxRenderer.js';
+import { SelectionOverlayRenderer } from './renderers/selectionBoxRenderer.js';
 
 function init() {
     document.addEventListener('DOMContentLoaded', () => {
         const container = document.querySelector('.box-container');
         const viewport = container.querySelector('#viewport');
-        const canvas = viewport.querySelector('#box-canvas');
+        const effectCanvas = viewport.querySelector('#effect-layer');
+        const guideCanvas = viewport.querySelector('#guide-layer');
         const layer = container.querySelector('#box-layer');
 
-        const transformer = new CoordinateTransformer(viewport, layer);
-
-        const canvasSelectionRenderer = new SelectionRenderer(canvas);
-        const selectionHandler = new SelectionInteractionHandler(layer, canvasSelectionRenderer);
-        selectionHandler.on();
+        const canvasSelectionRenderer = new CanvasSelectionRenderer(effectCanvas);
 
         const selectionOverlayRenderer = new SelectionOverlayRenderer(layer);
         const dragSelectHandler = new DragSelectHandler(selectionOverlayRenderer);
@@ -40,7 +36,7 @@ function init() {
             );
         }
 
-        const contextMenuHandler = new ContextMenuHandler(layer, transformer, testHtmlProvider);
+        const contextMenuHandler = new ContextMenuHandler(layer, testHtmlProvider);
         contextMenuHandler.on();
 
         const items = [
@@ -51,7 +47,9 @@ function init() {
         ];
 
         const itemRenderer = new ItemRenderer(layer);
-        const itemHandler = new ItemHandler(itemRenderer, container);
+        const guideLineRenderer = new GuideRenderer(guideCanvas);
+        guideLineRenderer.start();
+        const itemHandler = new ItemHandler(itemRenderer, container, canvasSelectionRenderer);
         itemHandler.init(items);
 
         const scrollResizeHandler = new ScrollResizeHandler(container, layer);

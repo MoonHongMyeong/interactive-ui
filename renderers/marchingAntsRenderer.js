@@ -1,8 +1,8 @@
-import { selectionState } from "../state/selectionState.js";
-import { setupCanvasHiDPI } from "../utils/canvas-utils.js";
+import { selectionState } from "../state/selectedItemsState.js";
+import { setupCanvasHiDPI } from "../utils/hiDpiCanvas.js";
 import { debounce } from '../utils/debounce.js';
 
-export class SelectionRenderer {
+export class CanvasSelectionRenderer {
     #canvas;
     #ctx;
     #dashOffset = 0;
