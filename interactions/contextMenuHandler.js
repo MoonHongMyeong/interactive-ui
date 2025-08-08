@@ -1,4 +1,4 @@
-import { getContainerRect } from '../utils/coordinateTransform.js';
+import { getContainerRect, getElementRelativePosition } from '../utils/coordinateTransform.js';
 
 export class ContextMenuHandler {
     #container;
@@ -21,7 +21,10 @@ export class ContextMenuHandler {
         event.preventDefault();
         event.stopPropagation();
 
-        const { x, y } = { x: event.clientX, y: event.clientY };
+        const viewport = this.#container.parentElement?.querySelector('#viewport');
+        const { x, y } = viewport
+            ? getElementRelativePosition(event, viewport)
+            : getElementRelativePosition(event, this.#container);
 
         const html = this.#provider(event.target);
         this.#renderContextMenu(html, x, y)
@@ -44,15 +47,21 @@ export class ContextMenuHandler {
         const menuWidth = menu.offsetWidth;
         const menuHeight = menu.offsetHeight;
 
-        const viewport = getContainerRect(this.#container.querySelector('#viewport'));
+        const viewportEl = this.#container.parentElement?.querySelector('#viewport');
+        const viewportRect = viewportEl ? getContainerRect(viewportEl) : getContainerRect(this.#container);
+
         let adjustX = x;
         let adjustY = y;
 
-        if ( x + menuWidth > viewport.width ) adjustX -= menuWidth;
-        if ( y + menuHeight > viewport.height ) adjustY -= menuHeight;
+        // Clamp within viewport bounds
+        if (adjustX + menuWidth > viewportRect.width) adjustX = Math.max(0, viewportRect.width - menuWidth);
+        if (adjustY + menuHeight > viewportRect.height) adjustY = Math.max(0, viewportRect.height - menuHeight);
 
-        menu.style.left = `${adjustX}px`;
-        menu.style.top = `${adjustY}px`;
+        const baseLeft = viewportEl ? viewportEl.offsetLeft : 0;
+        const baseTop = viewportEl ? viewportEl.offsetTop : 0;
+
+        menu.style.left = `${baseLeft + adjustX}px`;
+        menu.style.top = `${baseTop + adjustY}px`;
         menu.style.visibility = 'visible';
 
         const onClickOutside = (e) => {
